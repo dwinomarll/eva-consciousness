@@ -1,0 +1,12 @@
+{
+  "opencode": {
+    "type": "local",
+    "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "."],
+    "enabled": true
+  },
+  "claude": {
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+    "env": {}
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "opencode": {
+    "type": "local",
+    "command": ["docker", "run", "--rm", "-i", "-e", "OMI_API_KEY", "omiai/mcp-server:latest"],
+    "enabled": true,
+    "env": {
+      "OMI_API_KEY": "$OMI_API_KEY"
+    }
+  },
+  "claude": {
+    "command": "docker",
+    "args": ["run", "--rm", "-i", "-e", "OMI_API_KEY", "omiai/mcp-server:latest"],
+    "env": {
+      "OMI_API_KEY": "${OMI_API_KEY}"
+    }
+  }
+}
