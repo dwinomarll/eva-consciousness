@@ -1,0 +1,27 @@
+{
+  "name": "eva-consciousness",
+  "version": "0.1.0",
+  "description": "Eva Consciousness — AI-native playground spawner",
+  "type": "module",
+  "bin": { "eva-consciousness": "./dist/cli.js" },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.ts",
+    "spawn": "tsx src/cli.ts spawn",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "commander": "^12.1.0",
+    "execa": "^9.3.0",
+    "fs-extra": "^11.2.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  }
+}
