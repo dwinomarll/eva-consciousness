@@ -1,5 +1,7 @@
 # Eva Consciousness
 
+[![CI](https://github.com/dwinomarll/eva-consciousness/actions/workflows/ci.yml/badge.svg)](https://github.com/dwinomarll/eva-consciousness/actions/workflows/ci.yml)
+
 > AI-native playground spawner. One command. Ready in minutes.
 
 Spawns development playgrounds pre-wired with Eva's identity, MCPs, tools, notes, journals, and references — ready to run with **opencode** + **Claude Code** on macOS, Linux, or Windows.

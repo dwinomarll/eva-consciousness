@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { patchMcpConfigs, createJournalEntry } from '../src/template.js'
+import { patchMcpConfigs, createJournalEntry, copyTemplates } from '../src/template.js'
 import fs from 'fs-extra'
 import path from 'path'
 import os from 'os'
@@ -65,5 +65,52 @@ describe('createJournalEntry', () => {
     const content = await fs.readFile(entryPath, 'utf-8')
     expect(content).toContain(today)
     expect(content).not.toContain('{{DATE}}')
+  })
+})
+
+describe('copyTemplates', () => {
+  const today = new Date().toISOString().split('T')[0]
+
+  it('scaffolds a node playground with shared files + selected MCPs only', async () => {
+    const dest = await copyTemplates({
+      name: 'pg',
+      lang: 'node',
+      mcps: ['filesystem'],
+      outputDir: tmpDir
+    })
+
+    // language-specific scaffold
+    expect(await fs.pathExists(path.join(dest, 'src', 'index.ts'))).toBe(true)
+    expect(await fs.pathExists(path.join(dest, 'package.json'))).toBe(true)
+
+    // shared identity + structure
+    expect(await fs.pathExists(path.join(dest, 'CLAUDE.md'))).toBe(true)
+    expect(await fs.pathExists(path.join(dest, 'agents.md'))).toBe(true)
+    expect(await fs.pathExists(path.join(dest, 'journals', `${today}.md`))).toBe(true)
+
+    // MCP patching reflects selection
+    const claudeCfg = await fs.readJson(path.join(dest, '.mcp.json'))
+    expect(claudeCfg.mcpServers).toHaveProperty('filesystem')
+    expect(claudeCfg.mcpServers).not.toHaveProperty('notion')
+    const opencodeCfg = await fs.readJson(path.join(dest, 'opencode.json'))
+    expect(opencodeCfg.mcp).toHaveProperty('filesystem')
+    expect(opencodeCfg.mcp).not.toHaveProperty('omi')
+  })
+
+  it('scaffolds a python playground with main.py and empty MCP config', async () => {
+    const dest = await copyTemplates({
+      name: 'pg',
+      lang: 'python',
+      mcps: [],
+      outputDir: tmpDir
+    })
+
+    expect(await fs.pathExists(path.join(dest, 'main.py'))).toBe(true)
+    expect(await fs.pathExists(path.join(dest, 'pyproject.toml'))).toBe(true)
+    // node scaffold must not leak into a python playground
+    expect(await fs.pathExists(path.join(dest, 'src', 'index.ts'))).toBe(false)
+
+    const claudeCfg = await fs.readJson(path.join(dest, '.mcp.json'))
+    expect(claudeCfg.mcpServers).toEqual({})
   })
 })
