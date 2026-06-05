@@ -8,7 +8,24 @@ load_dotenv()
 
 app = FastAPI(title="Eva Consciousness Playground")
 
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY", ""))
+# Lazy so /health works even without an API key set.
+_client: anthropic.Anthropic | None = None
+
+
+def get_client() -> anthropic.Anthropic:
+    global _client
+    if _client is None:
+        _client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY", ""))
+    return _client
+
+
+def first_text(response) -> str:
+    """Safely extract the first text block from a messages response."""
+    for block in response.content:
+        if getattr(block, "type", None) == "text":
+            return block.text
+    return ""
+
 
 # Tether guard: when EVA_AUTH_TOKEN is set, require a matching bearer token.
 # This is what lets you safely expose /chat beyond localhost.
@@ -37,12 +54,12 @@ def health():
 @app.post("/chat", response_model=ChatResponse)
 def chat(req: ChatRequest, authorization: str | None = Header(default=None)):
     require_auth(authorization)
-    response = client.messages.create(
+    response = get_client().messages.create(
         model=req.model,
         max_tokens=1024,
         messages=[{"role": "user", "content": req.message}],
     )
-    return ChatResponse(reply=response.content[0].text)
+    return ChatResponse(reply=first_text(response))
 
 
 if __name__ == "__main__":

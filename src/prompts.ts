@@ -7,7 +7,12 @@ export async function runSpawnPrompts(): Promise<SpawnOptions> {
   const name = await p.text({
     message: 'Playground name:',
     placeholder: 'my-eva-experiment',
-    validate: (v) => v.trim().length === 0 ? 'Name is required' : undefined
+    validate: (v) => {
+      const t = v.trim()
+      if (t.length === 0) return 'Name is required'
+      if (!/^[A-Za-z0-9._-]+$/.test(t)) return 'Use letters, numbers, dot, dash, or underscore only'
+      return undefined
+    }
   })
   if (p.isCancel(name)) { p.cancel('Cancelled'); process.exit(0) }
 

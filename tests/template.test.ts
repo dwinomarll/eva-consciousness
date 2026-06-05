@@ -133,6 +133,24 @@ describe('copyTemplates', () => {
     expect(claudeCfg.mcpServers.memory.env.MEMORY_FILE_PATH).toContain('eva-workspace')
   })
 
+  it('seeds .env from .env.example on first spawn', async () => {
+    const dest = await copyTemplates({ name: 'pg', lang: 'node', mcps: [], outputDir: tmpDir })
+    expect(await fs.pathExists(path.join(dest, '.env'))).toBe(true)
+  })
+
+  it('rejects an unsafe playground name', async () => {
+    await expect(
+      copyTemplates({ name: '../escape', lang: 'node', mcps: [], outputDir: tmpDir })
+    ).rejects.toThrow(/Invalid playground name/)
+  })
+
+  it('refuses to clobber an existing directory', async () => {
+    await fs.ensureDir(path.join(tmpDir, 'pg'))
+    await expect(
+      copyTemplates({ name: 'pg', lang: 'node', mcps: [], outputDir: tmpDir })
+    ).rejects.toThrow(/already exists/)
+  })
+
   it('ships a runnable definition for every selectable MCP server', async () => {
     const dest = await copyTemplates({
       name: 'pg',

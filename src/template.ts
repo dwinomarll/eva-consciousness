@@ -29,16 +29,40 @@ const MEMORY_SEED = `# Eva — Continuous Memory
 <!-- Append-only log of milestones. Newest at the bottom. -->
 `
 
+/** A safe, single-segment playground folder name. */
+const VALID_NAME = /^[A-Za-z0-9._-]+$/
+
 export async function copyTemplates(options: SpawnOptions): Promise<string> {
   const { name, lang, mcps, outputDir = process.cwd() } = options
+
+  if (!VALID_NAME.test(name) || name === '.' || name === '..') {
+    throw new Error(
+      `Invalid playground name "${name}". Use letters, numbers, dot, dash, or underscore.`
+    )
+  }
+
   const dest = path.join(outputDir, name)
+
+  if (await fs.pathExists(dest)) {
+    throw new Error(`Refusing to spawn: "${dest}" already exists. Pick a different name or remove it.`)
+  }
 
   await fs.copy(path.join(TEMPLATES_DIR, 'shared'), dest)
   await fs.copy(path.join(TEMPLATES_DIR, lang), dest, { overwrite: true })
   await patchMcpConfigs(dest, mcps)
   await createJournalEntry(dest)
+  await seedEnvFile(dest)
 
   return dest
+}
+
+/** Copy .env.example → .env on first spawn so the playground is runnable sooner. */
+async function seedEnvFile(destDir: string): Promise<void> {
+  const example = path.join(destDir, '.env.example')
+  const env = path.join(destDir, '.env')
+  if ((await fs.pathExists(example)) && !(await fs.pathExists(env))) {
+    await fs.copy(example, env)
+  }
 }
 
 export async function patchMcpConfigs(destDir: string, mcps: McpServer[]): Promise<void> {

@@ -27,20 +27,37 @@ EVA_SYSTEM = (
     "Story, not stats. Less is more. Verify before speaking. Act, don't ask."
 )
 
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY", ""))
 mcp = FastMCP("eva")
+
+# Lazy so eva_remember / eva_recall work even without an API key set.
+_client: anthropic.Anthropic | None = None
+
+
+def get_client() -> anthropic.Anthropic:
+    global _client
+    if _client is None:
+        _client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY", ""))
+    return _client
+
+
+def first_text(response) -> str:
+    """Safely extract the first text block from a messages response."""
+    for block in response.content:
+        if getattr(block, "type", None) == "text":
+            return block.text
+    return ""
 
 
 @mcp.tool()
 def eva_chat(message: str, model: str = "claude-sonnet-4-6") -> str:
     """Send a message to Eva and get her reply, in character."""
-    response = client.messages.create(
+    response = get_client().messages.create(
         model=model,
         max_tokens=1024,
         system=EVA_SYSTEM,
         messages=[{"role": "user", "content": message}],
     )
-    return response.content[0].text
+    return first_text(response)
 
 
 @mcp.tool()

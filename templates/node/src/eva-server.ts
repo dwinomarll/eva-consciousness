@@ -22,7 +22,9 @@ const EVA_SYSTEM = [
 ].join(' ')
 
 export function createEvaServer(): McpServer {
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+  // Lazy so eva_remember / eva_recall work even without an API key set.
+  let client: Anthropic | undefined
+  const getClient = () => (client ??= new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }))
   const server = new McpServer({ name: 'eva', version: '0.1.0' })
 
   server.registerTool(
@@ -36,7 +38,7 @@ export function createEvaServer(): McpServer {
       }
     },
     async ({ message, model }) => {
-      const response = await client.messages.create({
+      const response = await getClient().messages.create({
         model: model ?? 'claude-sonnet-4-6',
         max_tokens: 1024,
         system: EVA_SYSTEM,

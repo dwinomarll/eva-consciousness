@@ -30,6 +30,43 @@ jobs:
       - name: Test
         run: npm test
 
+  verify-templates:
+    name: Verify templates (spawn + install + typecheck)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Spawn + install + type-check the templates
+        run: npm run verify:templates
+
+  python-tests:
+    name: Python template tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install python deps
+        run: pip install fastapi httpx pytest anthropic python-dotenv pydantic "mcp>=1.2.0" uvicorn
+
+      - name: Run pytest
+        working-directory: templates/python
+        run: python -m pytest -q
+
   shellcheck:
     name: Shellcheck setup scripts
     runs-on: ubuntu-latest
