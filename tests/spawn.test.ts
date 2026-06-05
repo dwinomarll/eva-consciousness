@@ -4,10 +4,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 const execaMock = vi.fn()
 vi.mock('execa', () => ({ execa: (...args: unknown[]) => execaMock(...args) }))
 
-// copyTemplates is covered by template.test.ts — stub it here so spawn tests
-// stay focused on the orchestration (git + dependency install) logic.
+// template functions are covered by template.test.ts — stub them here so spawn
+// tests stay focused on the orchestration (git + dependency install) logic and
+// never touch the real ~/eva-workspace memory stream.
 vi.mock('../src/template.js', () => ({
-  copyTemplates: vi.fn().mockResolvedValue('/tmp/fake-playground/pg')
+  copyTemplates: vi.fn().mockResolvedValue('/tmp/fake-playground/pg'),
+  ensureMemoryWorkspace: vi.fn().mockResolvedValue('/tmp/fake-workspace/memory/MEMORY.md')
 }))
 
 // @clack/prompts only provides UI affordances; render them as no-ops.

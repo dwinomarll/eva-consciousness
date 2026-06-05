@@ -1,0 +1,12 @@
+{
+  "opencode": {
+    "type": "local",
+    "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
+    "enabled": true
+  },
+  "claude": {
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+    "env": {}
+  }
+}

@@ -1,5 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { patchMcpConfigs, createJournalEntry, copyTemplates } from '../src/template.js'
+import {
+  patchMcpConfigs,
+  createJournalEntry,
+  copyTemplates,
+  ensureMemoryWorkspace
+} from '../src/template.js'
 import fs from 'fs-extra'
 import path from 'path'
 import os from 'os'
@@ -112,5 +117,41 @@ describe('copyTemplates', () => {
 
     const claudeCfg = await fs.readJson(path.join(dest, '.mcp.json'))
     expect(claudeCfg.mcpServers).toEqual({})
+  })
+
+  it('wires the shared memory MCP when selected', async () => {
+    const dest = await copyTemplates({
+      name: 'pg',
+      lang: 'node',
+      mcps: ['memory'],
+      outputDir: tmpDir
+    })
+
+    const claudeCfg = await fs.readJson(path.join(dest, '.mcp.json'))
+    expect(claudeCfg.mcpServers).toHaveProperty('memory')
+    expect(claudeCfg.mcpServers.memory.env.MEMORY_FILE_PATH).toContain('eva-workspace')
+  })
+})
+
+describe('ensureMemoryWorkspace', () => {
+  it('creates MEMORY.md (the stream) when it does not exist', async () => {
+    const ws = path.join(tmpDir, 'eva-workspace')
+    const memoryFile = await ensureMemoryWorkspace(ws)
+
+    expect(memoryFile).toBe(path.join(ws, 'memory', 'MEMORY.md'))
+    expect(await fs.pathExists(memoryFile)).toBe(true)
+    const content = await fs.readFile(memoryFile, 'utf-8')
+    expect(content).toContain('Continuous Memory')
+  })
+
+  it('never overwrites an existing stream', async () => {
+    const ws = path.join(tmpDir, 'eva-workspace')
+    const memoryFile = path.join(ws, 'memory', 'MEMORY.md')
+    await fs.ensureDir(path.dirname(memoryFile))
+    await fs.writeFile(memoryFile, 'EXISTING STREAM — do not clobber')
+
+    await ensureMemoryWorkspace(ws)
+
+    expect(await fs.readFile(memoryFile, 'utf-8')).toBe('EXISTING STREAM — do not clobber')
   })
 })

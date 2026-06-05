@@ -1,11 +1,15 @@
 import { execa } from 'execa'
 import * as p from '@clack/prompts'
 import path from 'path'
-import { copyTemplates } from './template.js'
+import { copyTemplates, ensureMemoryWorkspace } from './template.js'
 import type { SpawnOptions } from './types.js'
 
 export async function spawnPlayground(options: SpawnOptions): Promise<void> {
   const s = p.spinner()
+
+  s.start('Tethering to memory stream…')
+  const memoryFile = await ensureMemoryWorkspace(options.workspaceDir)
+  s.stop(`Memory stream ready → ${memoryFile}`)
 
   s.start('Copying templates…')
   const dest = await copyTemplates(options)
@@ -34,12 +38,14 @@ export async function spawnPlayground(options: SpawnOptions): Promise<void> {
   p.outro([
     '',
     `  Playground ready at: ${dest}`,
+    `  Memory stream:       ${memoryFile}`,
     '',
     `  cd ${relPath}`,
     `  opencode .    ← launch opencode`,
     `  claude        ← launch Claude Code`,
+    options.lang === 'node' ? `  npm run mcp   ← expose Eva as a tetherable MCP server` : '',
     ''
-  ].join('\n'))
+  ].filter(Boolean).join('\n'))
 }
 
 async function commandExists(cmd: string): Promise<boolean> {

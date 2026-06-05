@@ -1,0 +1,17 @@
+{
+  "opencode": {
+    "type": "local",
+    "command": ["npx", "-y", "@modelcontextprotocol/server-memory"],
+    "enabled": true,
+    "env": {
+      "MEMORY_FILE_PATH": "$HOME/eva-workspace/memory/memory.json"
+    }
+  },
+  "claude": {
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-memory"],
+    "env": {
+      "MEMORY_FILE_PATH": "${HOME}/eva-workspace/memory/memory.json"
+    }
+  }
+}

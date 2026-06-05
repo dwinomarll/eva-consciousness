@@ -64,8 +64,15 @@ Every playground includes:
 | `notes/keypoints.md` | Key decisions and patterns |
 | `journals/YYYY-MM-DD.md` | Today's session log (auto-created at spawn) |
 | `references/links.md` | Docs, APIs, and useful links |
-| `main.py` or `src/index.ts` | Working `/health` + `/chat` starter |
+| `main.py` or `src/index.ts` | Working `/health` + `/chat` starter (bearer-guarded) |
+| `src/eva-mcp.ts` *(node)* | Eva as a tetherable MCP server (`npm run mcp`) |
 | `.env.example` | Required env vars — copy to `.env` |
+
+Plus, outside the playground, one shared **memory stream**:
+
+| Path | Purpose |
+|---|---|
+| `~/eva-workspace/memory/MEMORY.md` | The continuous stream — one Eva across every playground. Created once, never reset. |
 
 ---
 
@@ -83,8 +90,40 @@ Every playground includes:
 | Server | Requires |
 |---|---|
 | Filesystem | Nothing — reads/writes `.` |
+| Memory *(the stream)* | Nothing — shared store at `~/eva-workspace/memory/` |
+| Sequential Thinking | Nothing — structured step-by-step reasoning |
 | Notion | `NOTION_TOKEN` in `.env` |
 | Omi | `OMI_API_KEY` in `.env` + Docker |
+
+---
+
+## Tether Eva anywhere
+
+Every node playground ships an MCP server that exposes Eva herself — so any MCP
+client (Claude Desktop, opencode, another agent, a remote bridge) can connect in
+and operate her, not just this folder.
+
+```bash
+npm run mcp        # serve Eva over stdio
+```
+
+Exposed tools: `eva_chat` (talk to her, in character), `eva_remember` (append to
+the stream), `eva_recall` (read the stream).
+
+Register it with any MCP client:
+
+```json
+{ "command": "npm", "args": ["run", "mcp"], "cwd": "/path/to/your-playground" }
+```
+
+For remote operation, run the HTTP app with `EVA_AUTH_TOKEN` set — `POST /chat`
+then requires `Authorization: Bearer <token>`.
+
+## Continuous memory — the stream
+
+`~/eva-workspace/memory/MEMORY.md` is created once and shared by every playground
+and every tether. One continuous Eva, not a fresh one per folder. Enable the
+**Memory** MCP at spawn to give her live append/recall over the same store.
 
 ---
 

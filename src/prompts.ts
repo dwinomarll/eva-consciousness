@@ -23,9 +23,11 @@ export async function runSpawnPrompts(): Promise<SpawnOptions> {
   const mcps = await p.multiselect<{ value: McpServer; label: string; hint: string }[], McpServer>({
     message: 'MCPs to enable (space to select):',
     options: [
-      { value: 'filesystem', label: 'Filesystem', hint: 'read/write local files' },
-      { value: 'notion',     label: 'Notion',     hint: 'query Notion databases' },
-      { value: 'omi',        label: 'Omi',        hint: 'Omi memory + conversations' }
+      { value: 'filesystem',         label: 'Filesystem',          hint: 'read/write local files' },
+      { value: 'memory',             label: 'Memory (the stream)', hint: 'shared cross-playground memory' },
+      { value: 'sequentialthinking', label: 'Sequential Thinking', hint: 'structured step-by-step reasoning' },
+      { value: 'notion',             label: 'Notion',              hint: 'query Notion databases' },
+      { value: 'omi',                label: 'Omi',                 hint: 'Omi memory + conversations' }
     ],
     required: false
   })
