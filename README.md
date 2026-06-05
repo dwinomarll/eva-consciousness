@@ -65,7 +65,8 @@ Every playground includes:
 | `journals/YYYY-MM-DD.md` | Today's session log (auto-created at spawn) |
 | `references/links.md` | Docs, APIs, and useful links |
 | `main.py` or `src/index.ts` | Working `/health` + `/chat` starter (bearer-guarded) |
-| `src/eva-mcp.ts` *(node)* | Eva as a tetherable MCP server (`npm run mcp`) |
+| `src/eva-mcp.ts` / `src/eva-mcp-http.ts` *(node)* | Eva as a tetherable MCP server — stdio + remote HTTP |
+| `eva_mcp.py` *(python)* | Eva as a tetherable MCP server (stdio) |
 | `.env.example` | Required env vars — copy to `.env` |
 
 Plus, outside the playground, one shared **memory stream**:
@@ -92,6 +93,9 @@ Plus, outside the playground, one shared **memory stream**:
 | Filesystem | Nothing — reads/writes `.` |
 | Memory *(the stream)* | Nothing — shared store at `~/eva-workspace/memory/` |
 | Sequential Thinking | Nothing — structured step-by-step reasoning |
+| Gmail | One-time `npx @gongrzhe/server-gmail-autoauth-mcp auth` (Google OAuth) |
+| Google Calendar | `GOOGLE_OAUTH_CREDENTIALS` (path to OAuth keys JSON) |
+| Slack | `SLACK_BOT_TOKEN` + `SLACK_TEAM_ID` |
 | Notion | `NOTION_TOKEN` in `.env` |
 | Omi | `OMI_API_KEY` in `.env` + Docker |
 
@@ -99,25 +103,27 @@ Plus, outside the playground, one shared **memory stream**:
 
 ## Tether Eva anywhere
 
-Every node playground ships an MCP server that exposes Eva herself — so any MCP
+Every playground ships an MCP server that exposes Eva herself — so any MCP
 client (Claude Desktop, opencode, another agent, a remote bridge) can connect in
-and operate her, not just this folder.
+and operate her, not just this folder. Exposed tools: `eva_chat` (talk to her,
+in character), `eva_remember` (append to the stream), `eva_recall` (read it).
 
+**Local (stdio):**
 ```bash
-npm run mcp        # serve Eva over stdio
+npm run mcp          # node
+python eva_mcp.py    # python
 ```
-
-Exposed tools: `eva_chat` (talk to her, in character), `eva_remember` (append to
-the stream), `eva_recall` (read the stream).
-
-Register it with any MCP client:
-
+Register with any client:
 ```json
 { "command": "npm", "args": ["run", "mcp"], "cwd": "/path/to/your-playground" }
 ```
 
-For remote operation, run the HTTP app with `EVA_AUTH_TOKEN` set — `POST /chat`
-then requires `Authorization: Bearer <token>`.
+**Remote (HTTP, off-host) — node:**
+```bash
+EVA_AUTH_TOKEN=<secret> npm run mcp:http   # POST http://<host>:8787/mcp
+```
+Callers must send `Authorization: Bearer <secret>`. The `/chat` HTTP endpoint is
+bearer-guarded the same way (node + python).
 
 ## Continuous memory — the stream
 

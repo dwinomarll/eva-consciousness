@@ -26,6 +26,9 @@ export async function runSpawnPrompts(): Promise<SpawnOptions> {
       { value: 'filesystem',         label: 'Filesystem',          hint: 'read/write local files' },
       { value: 'memory',             label: 'Memory (the stream)', hint: 'shared cross-playground memory' },
       { value: 'sequentialthinking', label: 'Sequential Thinking', hint: 'structured step-by-step reasoning' },
+      { value: 'gmail',              label: 'Gmail',               hint: 'read/send mail (OAuth)' },
+      { value: 'gcal',               label: 'Google Calendar',     hint: 'events + scheduling (OAuth)' },
+      { value: 'slack',              label: 'Slack',               hint: 'channels + messages (bot token)' },
       { value: 'notion',             label: 'Notion',              hint: 'query Notion databases' },
       { value: 'omi',                label: 'Omi',                 hint: 'Omi memory + conversations' }
     ],

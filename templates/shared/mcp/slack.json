@@ -1,0 +1,19 @@
+{
+  "opencode": {
+    "type": "local",
+    "command": ["npx", "-y", "@modelcontextprotocol/server-slack"],
+    "enabled": true,
+    "env": {
+      "SLACK_BOT_TOKEN": "$SLACK_BOT_TOKEN",
+      "SLACK_TEAM_ID": "$SLACK_TEAM_ID"
+    }
+  },
+  "claude": {
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-slack"],
+    "env": {
+      "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
+      "SLACK_TEAM_ID": "${SLACK_TEAM_ID}"
+    }
+  }
+}

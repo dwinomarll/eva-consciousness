@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "Eva Consciousness — AI-native playground spawner",
   "type": "module",
-  "bin": { "eva-consciousness": "./dist/cli.js" },
+  "bin": {
+    "eva-consciousness": "./dist/cli.js"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/cli.ts",
@@ -22,6 +24,6 @@
     "@types/node": "^20.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.4.0",
-    "vitest": "^1.6.0"
+    "vitest": "^4.1.8"
   }
 }

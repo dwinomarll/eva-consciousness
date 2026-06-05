@@ -1,5 +1,25 @@
 export type Lang = 'python' | 'node'
-export type McpServer = 'notion' | 'omi' | 'filesystem' | 'memory' | 'sequentialthinking'
+export type McpServer =
+  | 'notion'
+  | 'omi'
+  | 'filesystem'
+  | 'memory'
+  | 'sequentialthinking'
+  | 'gmail'
+  | 'gcal'
+  | 'slack'
+
+/** Every selectable MCP server. Each must ship a templates/shared/mcp/<name>.json. */
+export const ALL_MCP_SERVERS: McpServer[] = [
+  'filesystem',
+  'memory',
+  'sequentialthinking',
+  'gmail',
+  'gcal',
+  'slack',
+  'notion',
+  'omi'
+]
 
 export interface SpawnOptions {
   name: string

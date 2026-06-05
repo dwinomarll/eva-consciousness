@@ -5,6 +5,7 @@ import {
   copyTemplates,
   ensureMemoryWorkspace
 } from '../src/template.js'
+import { ALL_MCP_SERVERS } from '../src/types.js'
 import fs from 'fs-extra'
 import path from 'path'
 import os from 'os'
@@ -130,6 +131,25 @@ describe('copyTemplates', () => {
     const claudeCfg = await fs.readJson(path.join(dest, '.mcp.json'))
     expect(claudeCfg.mcpServers).toHaveProperty('memory')
     expect(claudeCfg.mcpServers.memory.env.MEMORY_FILE_PATH).toContain('eva-workspace')
+  })
+
+  it('ships a runnable definition for every selectable MCP server', async () => {
+    const dest = await copyTemplates({
+      name: 'pg',
+      lang: 'node',
+      mcps: ALL_MCP_SERVERS,
+      outputDir: tmpDir
+    })
+
+    const claudeCfg = await fs.readJson(path.join(dest, '.mcp.json'))
+    // patchMcpConfigs only includes a server if its mcp/<name>.json exists,
+    // so this fails if a menu option ever lacks a shipped definition.
+    for (const server of ALL_MCP_SERVERS) {
+      expect(claudeCfg.mcpServers, `missing definition for ${server}`).toHaveProperty(server)
+    }
+    // credentialed servers carry their documented env vars
+    expect(claudeCfg.mcpServers.slack.env).toHaveProperty('SLACK_BOT_TOKEN')
+    expect(claudeCfg.mcpServers.gcal.env).toHaveProperty('GOOGLE_OAUTH_CREDENTIALS')
   })
 })
 

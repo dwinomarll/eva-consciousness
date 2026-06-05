@@ -1,0 +1,12 @@
+{
+  "opencode": {
+    "type": "local",
+    "command": ["npx", "-y", "@gongrzhe/server-gmail-autoauth-mcp"],
+    "enabled": true
+  },
+  "claude": {
+    "command": "npx",
+    "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"],
+    "env": {}
+  }
+}
