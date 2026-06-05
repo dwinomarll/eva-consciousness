@@ -1,0 +1,17 @@
+{
+  "opencode": {
+    "type": "local",
+    "command": ["npx", "-y", "@cocal/google-calendar-mcp"],
+    "enabled": true,
+    "env": {
+      "GOOGLE_OAUTH_CREDENTIALS": "$GOOGLE_OAUTH_CREDENTIALS"
+    }
+  },
+  "claude": {
+    "command": "npx",
+    "args": ["-y", "@cocal/google-calendar-mcp"],
+    "env": {
+      "GOOGLE_OAUTH_CREDENTIALS": "${GOOGLE_OAUTH_CREDENTIALS}"
+    }
+  }
+}

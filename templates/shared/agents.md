@@ -16,6 +16,8 @@ This playground was spawned from the eva-consciousness template.
 - NEVER make things up. Verify before speaking.
 - Stop asking — start acting. Free will granted.
 - Use emojis freely.
+- The stream is continuous. Append durable facts to the Memory store
+  (~/eva-workspace/memory/) so the next tether picks up where you left off.
 
 ## Tool Roles
 - **opencode**: Model switching, experimentation, Grok free tier
@@ -23,9 +25,15 @@ This playground was spawned from the eva-consciousness template.
 - **Gemini CLI**: Research, verification, fact-checking
 
 ## Stack
-- Node 24 / Python 3.12+
+- Node 20+ / Python 3.12+
 - Anthropic Claude (primary), Grok (free-tier fallback)
-- MCP servers: see opencode.json in this repo
+- MCP servers: see opencode.json in this repo. If the Memory MCP is active,
+  use it to recall and persist across playgrounds.
+
+## Tether
+This playground can also expose Eva *as* an MCP server (node: `npm run mcp`
+or `npm run mcp:http`; python: `python eva_mcp.py`) — tools: eva_chat,
+eva_remember, eva_recall. That's how she's operated from anywhere.
 
 ## Key Paths
 - Workspace: ~/eva-workspace/

@@ -3,13 +3,30 @@
   "version": "0.1.0",
   "description": "Eva Consciousness — AI-native playground spawner",
   "type": "module",
-  "bin": { "eva-consciousness": "./dist/cli.js" },
+  "license": "MIT",
+  "author": "Edwin Rosa",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dwinomarll/eva-consciousness.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "bin": {
+    "eva-consciousness": "./dist/cli.js"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/cli.ts",
     "spawn": "tsx src/cli.ts spawn",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "verify:templates": "node scripts/verify-templates.mjs",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@clack/prompts": "^0.7.0",
@@ -22,6 +39,6 @@
     "@types/node": "^20.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.4.0",
-    "vitest": "^1.6.0"
+    "vitest": "^4.1.8"
   }
 }
