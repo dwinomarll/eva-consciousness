@@ -7,21 +7,21 @@ import type { SpawnOptions } from './types.js'
 export async function spawnPlayground(options: SpawnOptions): Promise<void> {
   const s = p.spinner()
 
-  s.start('Tethering to memory stream…')
+  s.start('Tethering to memory stream...')
   const memoryFile = await ensureMemoryWorkspace(options.workspaceDir)
-  s.stop(`Memory stream ready → ${memoryFile}`)
+  s.stop(`Memory stream ready -> ${memoryFile}`)
 
-  s.start('Copying templates…')
+  s.start('Copying templates...')
   const dest = await copyTemplates(options)
-  s.stop(`Templates copied → ${dest}`)
+  s.stop(`Templates copied -> ${dest}`)
 
-  s.start('Initialising git…')
+  s.start('Initialising git...')
   await execa('git', ['init'], { cwd: dest })
   await execa('git', ['add', '.'], { cwd: dest })
   await execa('git', ['commit', '-m', 'chore: init Eva Consciousness playground'], { cwd: dest })
   s.stop('Git initialised')
 
-  s.start('Installing dependencies…')
+  s.start('Installing dependencies...')
   if (options.lang === 'node') {
     await execa('npm', ['install'], { cwd: dest })
   } else {
@@ -32,6 +32,9 @@ export async function spawnPlayground(options: SpawnOptions): Promise<void> {
       await execa('pip', ['install', '-e', '.'], { cwd: dest })
     }
   }
+  if (options.mcps.includes('maat')) {
+    await execa('npm', ['install'], { cwd: path.join(dest, 'maat-mcp') })
+  }
   s.stop('Dependencies installed')
 
   const relPath = path.relative(process.cwd(), dest)
@@ -41,9 +44,10 @@ export async function spawnPlayground(options: SpawnOptions): Promise<void> {
     `  Memory stream:       ${memoryFile}`,
     '',
     `  cd ${relPath}`,
-    `  opencode .    ← launch opencode`,
-    `  claude        ← launch Claude Code`,
-    options.lang === 'node' ? `  npm run mcp   ← expose Eva as a tetherable MCP server` : '',
+    '  opencode .    <- launch opencode',
+    '  claude        <- launch Claude Code',
+    options.lang === 'node' ? '  npm run mcp   <- expose Eva as a tetherable MCP server' : '',
+    options.mcps.includes('maat') ? "  npm --prefix maat-mcp run mcp   <- expose /Ma'at as an MCP server" : '',
     ''
   ].filter(Boolean).join('\n'))
 }

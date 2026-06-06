@@ -37,7 +37,7 @@ eva-consciousness spawn
 Follow the prompts:
 - Name your playground
 - Choose language: `node` or `python`
-- Select MCPs to enable: Filesystem, Notion, Omi
+- Select MCPs to enable: Filesystem, Memory, Sequential Thinking, Gmail, Google Calendar, Slack, Ma'at, Notion, Omi
 
 ### 3. Start building
 
@@ -96,8 +96,36 @@ Plus, outside the playground, one shared **memory stream**:
 | Gmail | One-time `npx @gongrzhe/server-gmail-autoauth-mcp auth` (Google OAuth) |
 | Google Calendar | `GOOGLE_OAUTH_CREDENTIALS` (path to OAuth keys JSON) |
 | Slack | `SLACK_BOT_TOKEN` + `SLACK_TEAM_ID` |
+| Ma'at | Nothing required; optional `MAAT_WORKSPACE` + `MAAT_REPO_PATH` overrides |
 | Notion | `NOTION_TOKEN` in `.env` |
 | Omi | `OMI_API_KEY` in `.env` + Docker |
+
+---
+
+## /Ma'at MCP
+
+Select **Ma'at** during spawn to add a bundled local MCP server at `maat-mcp/`.
+It exposes read-first doctrine and routing tools for MAAT/NEXUS work:
+`maat_status`, `maat_route`, `maat_doctrine_read`, and `maat_codex_config`.
+
+Run it from a spawned playground:
+
+```bash
+npm --prefix maat-mcp run mcp
+```
+
+Codex can connect to it from `config.toml` as a local STDIO MCP server:
+
+```toml
+[mcp_servers.maat]
+command = "npm"
+args = ["--prefix", "maat-mcp", "run", "mcp"]
+cwd = "/path/to/your-playground"
+
+[mcp_servers.maat.env]
+MAAT_WORKSPACE = "~/eva-workspace"
+MAAT_REPO_PATH = "~/maat-repo"
+```
 
 ---
 

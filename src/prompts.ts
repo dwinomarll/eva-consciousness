@@ -34,6 +34,7 @@ export async function runSpawnPrompts(): Promise<SpawnOptions> {
       { value: 'gmail',              label: 'Gmail',               hint: 'read/send mail (OAuth)' },
       { value: 'gcal',               label: 'Google Calendar',     hint: 'events + scheduling (OAuth)' },
       { value: 'slack',              label: 'Slack',               hint: 'channels + messages (bot token)' },
+      { value: 'maat',               label: "Ma'at",               hint: 'local /Maat doctrine + routing MCP' },
       { value: 'notion',             label: 'Notion',              hint: 'query Notion databases' },
       { value: 'omi',                label: 'Omi',                 hint: 'Omi memory + conversations' }
     ],

@@ -30,6 +30,26 @@ jobs:
       - name: Test
         run: npm test
 
+  maat-mcp:
+    name: Ma'at MCP build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: templates/shared/maat-mcp/package-lock.json
+
+      - name: Install Ma'at MCP dependencies
+        working-directory: templates/shared/maat-mcp
+        run: npm ci
+
+      - name: Build Ma'at MCP
+        working-directory: templates/shared/maat-mcp
+        run: npm run build
+
   verify-templates:
     name: Verify templates (spawn + install + typecheck)
     runs-on: ubuntu-latest

@@ -1,0 +1,19 @@
+{
+  "opencode": {
+    "type": "local",
+    "command": ["npm", "--prefix", "maat-mcp", "run", "mcp"],
+    "enabled": true,
+    "env": {
+      "MAAT_WORKSPACE": "$HOME/eva-workspace",
+      "MAAT_REPO_PATH": "$HOME/maat-repo"
+    }
+  },
+  "claude": {
+    "command": "npm",
+    "args": ["--prefix", "maat-mcp", "run", "mcp"],
+    "env": {
+      "MAAT_WORKSPACE": "${HOME}/eva-workspace",
+      "MAAT_REPO_PATH": "${HOME}/maat-repo"
+    }
+  }
+}

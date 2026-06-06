@@ -8,6 +8,7 @@ export type McpServer =
   | 'gmail'
   | 'gcal'
   | 'slack'
+  | 'maat'
 
 /** Every selectable MCP server. Each must ship a templates/shared/mcp/<name>.json. */
 export const ALL_MCP_SERVERS: McpServer[] = [
@@ -17,6 +18,7 @@ export const ALL_MCP_SERVERS: McpServer[] = [
   'gmail',
   'gcal',
   'slack',
+  'maat',
   'notion',
   'omi'
 ]

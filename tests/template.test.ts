@@ -168,6 +168,7 @@ describe('copyTemplates', () => {
     // credentialed servers carry their documented env vars
     expect(claudeCfg.mcpServers.slack.env).toHaveProperty('SLACK_BOT_TOKEN')
     expect(claudeCfg.mcpServers.gcal.env).toHaveProperty('GOOGLE_OAUTH_CREDENTIALS')
+    expect(claudeCfg.mcpServers).toHaveProperty('maat')
   })
 })
 

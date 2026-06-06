@@ -46,6 +46,14 @@ describe('spawnPlayground', () => {
     expect(cmds).not.toContain('uv sync')
   })
 
+  it('installs the bundled Maat MCP when selected', async () => {
+    await spawnPlayground({ name: 'pg', lang: 'node', mcps: ['maat'] })
+
+    const npmInstallCalls = execaMock.mock.calls.filter((call) => call[0] === 'npm' && call[1]?.[0] === 'install')
+    expect(npmInstallCalls).toHaveLength(2)
+    expect(npmInstallCalls[1]?.[2]?.cwd).toMatch(/[\\/]tmp[\\/]fake-playground[\\/]pg[\\/]maat-mcp$/)
+  })
+
   it('prefers `uv sync` for python when uv is available', async () => {
     await spawnPlayground({ name: 'pg', lang: 'python', mcps: [] })
 

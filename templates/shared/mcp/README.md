@@ -12,5 +12,6 @@ with only the servers you selected.
 | Server | File | Requires |
 |---|---|---|
 | Filesystem | filesystem.json | Nothing — reads/writes `.` |
+| Ma'at | maat.json | Nothing; optional `MAAT_WORKSPACE` + `MAAT_REPO_PATH` |
 | Notion | notion.json | `NOTION_TOKEN` in .env |
 | Omi | omi.json | `OMI_API_KEY` in .env + Docker |
