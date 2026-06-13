@@ -104,9 +104,10 @@ Plus, outside the playground, one shared **memory stream**:
 ## Tether Eva anywhere
 
 Every playground ships an MCP server that exposes Eva herself — so any MCP
-client (Claude Desktop, opencode, another agent, a remote bridge) can connect in
-and operate her, not just this folder. Exposed tools: `eva_chat` (talk to her,
-in character), `eva_remember` (append to the stream), `eva_recall` (read it).
+client (Claude Desktop, opencode, **Ma'at**, another agent, a remote bridge) can
+connect in and operate her, not just this folder. Exposed tools: `eva_chat`
+(talk to her, in character), `eva_remember` (persist a memory), `eva_recall`
+(semantic/keyword search over the memory store).
 
 **Local (stdio):**
 ```bash
@@ -145,11 +146,34 @@ For Streamable HTTP, first run `EVA_AUTH_TOKEN=<secret> npm run mcp:http`, then
 point the client at `http://<host>:8787/mcp` and store the bearer token in that
 client's secret system.
 
-## Continuous memory — the stream
+**Control from any MCP app (Ma'at, Claude Desktop, …):** point the app's MCP
+config at the tether — stdio for local, the Streamable-HTTP URL for remote — and
+Eva's tools (`eva_chat`, `eva_remember`, `eva_recall`) appear natively in that
+app, driven by whatever agent runs there:
+```jsonc
+// remote, in any MCP client that speaks Streamable HTTP
+{ "eva": { "url": "http://<host>:8787/mcp", "headers": { "Authorization": "Bearer <secret>" } } }
+```
 
-`~/eva-workspace/memory/MEMORY.md` is created once and shared by every playground
-and every tether. One continuous Eva, not a fresh one per folder. Enable the
-**Memory** MCP at spawn to give her live append/recall over the same store.
+See [`templates/shared/TETHER.md`](templates/shared/TETHER.md) for reach levels
+(local / LAN / worldwide) and worldwide deployment.
+
+## Continuous memory — searchable & semantic
+
+`~/eva-workspace/memory/` is the one continuous store shared by every playground
+and every tether — not a fresh Eva per folder. Two layers live there:
+
+- `MEMORY.md` — the human-readable narrative stream (created once, never reset)
+- `memory.jsonl` — the structured, append-only records the tools search
+
+`eva_recall(query)` ranks by relevance, **both key-gated**:
+
+- **offline default** — BM25 keyword ranking, no API key, no network
+- **embeddings on** — set `VOYAGE_API_KEY` / `OPENAI_API_KEY` (or `EVA_EMBED_*`)
+  and new memories are embedded on write, so recall becomes true cosine-similarity
+  semantic search. Text-only records still surface via the keyword path.
+
+Call `eva_recall()` with no query for the most recent memories.
 
 ---
 
@@ -165,14 +189,17 @@ eva-consciousness/
 │   └── types.ts          ← shared types
 ├── templates/
 │   ├── shared/           ← injected into every playground
-│   ├── python/           ← FastAPI scaffold
-│   └── node/             ← Express/TypeScript scaffold
+│   ├── python/           ← FastAPI scaffold + tether (eva_mcp.py, memory.py)
+│   └── node/             ← Express/TS scaffold + tether (eva-server.ts, memory.ts)
 ├── scripts/
 │   ├── setup-mac.sh
 │   ├── setup-linux.sh
-│   └── setup-windows.ps1
+│   ├── setup-windows.ps1
+│   └── verify-templates.mjs   ← CI: spawn + install + type-check templates
 └── tests/
-    └── template.test.ts
+    ├── template.test.ts
+    ├── spawn.test.ts
+    └── memory.test.ts         ← memory store: BM25 + key-gated vectors
 ```
 
 ---
