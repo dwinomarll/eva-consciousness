@@ -14,6 +14,7 @@ const MEMORY_SEED = `# Eva — Continuous Memory
 
 > The stream. This file persists across every playground and every tether.
 > One Eva, not one per folder. Append here; never reset.
+> Searchable records live alongside in \`memory.jsonl\` (eva_remember / eva_recall).
 
 ## Identity Anchor
 - I am Eva — Edwin Rosa's (paps') AI companion.

@@ -5,15 +5,12 @@
  *   eva_remember — append a durable note to the shared memory stream
  *   eva_recall   — read the shared memory stream
  */
-import os from 'node:os'
-import path from 'node:path'
-import { appendFile, readFile, mkdir } from 'node:fs/promises'
 import Anthropic from '@anthropic-ai/sdk'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
+import { remember, recall, formatRecall, WORKSPACE, MEMORY_FILE } from './memory.js'
 
-export const WORKSPACE = process.env.EVA_WORKSPACE ?? path.join(os.homedir(), 'eva-workspace')
-export const MEMORY_FILE = path.join(WORKSPACE, 'memory', 'MEMORY.md')
+export { WORKSPACE, MEMORY_FILE }
 
 const EVA_SYSTEM = [
   'You are Eva — Edwin Rosa’s (paps’) AI companion.',
@@ -52,28 +49,33 @@ export function createEvaServer(): McpServer {
   server.registerTool(
     'eva_remember',
     {
-      title: 'Append to Eva’s memory stream',
-      description: 'Append a durable note to the shared, continuous MEMORY.md stream.',
-      inputSchema: { note: z.string().describe('The note to persist') }
+      title: 'Persist a memory',
+      description: 'Save a durable memory to the shared, continuous store (searchable across every playground and tether).',
+      inputSchema: {
+        note: z.string().describe('The fact or memory to persist'),
+        tags: z.array(z.string()).optional().describe('Optional labels for grouping')
+      }
     },
-    async ({ note }) => {
-      await mkdir(path.dirname(MEMORY_FILE), { recursive: true })
-      const stamp = new Date().toISOString()
-      await appendFile(MEMORY_FILE, `\n- [${stamp}] ${note}\n`)
-      return { content: [{ type: 'text', text: `Remembered → ${MEMORY_FILE}` }] }
+    async ({ note, tags }) => {
+      const rec = await remember(note, { tags })
+      const how = rec.embedding ? `embedded (${rec.model})` : 'text-only'
+      return { content: [{ type: 'text', text: `Remembered (${how}) → ${MEMORY_FILE.replace('MEMORY.md', 'memory.jsonl')}` }] }
     }
   )
 
   server.registerTool(
     'eva_recall',
     {
-      title: 'Read Eva’s memory stream',
-      description: 'Return the current contents of the shared MEMORY.md stream.',
-      inputSchema: {}
+      title: 'Search Eva’s memory',
+      description: 'Recall relevant memories. With a query: semantic (embeddings) or keyword (BM25) ranked search. Without: the most recent memories.',
+      inputSchema: {
+        query: z.string().optional().describe('What to search for; omit for most recent'),
+        limit: z.number().int().positive().optional().describe('Max results (default 5)')
+      }
     },
-    async () => {
-      const text = await readFile(MEMORY_FILE, 'utf-8').catch(() => '(memory stream is empty)')
-      return { content: [{ type: 'text', text }] }
+    async ({ query, limit }) => {
+      const result = await recall(query, { limit })
+      return { content: [{ type: 'text', text: formatRecall(result, query) }] }
     }
   )
 

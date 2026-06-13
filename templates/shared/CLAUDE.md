@@ -24,9 +24,15 @@ See .mcp.json in this repo root. Active servers are pre-configured.
 If the Memory MCP is active, use it to recall and persist across playgrounds.
 
 ## Tether
-This playground can also expose Eva *as* an MCP server (`npm run mcp`, node
-only) — tools: eva_chat, eva_remember, eva_recall. That's how she's operated
-from anywhere, not just this folder.
+This playground can also expose Eva *as* an MCP server — stdio (`npm run mcp`
+or `python eva_mcp.py`) or remote HTTP (`npm run mcp:http`). Tools: eva_chat,
+eva_remember, eva_recall. Point any MCP app (Ma'at, Claude Desktop, …) at it and
+those tools appear natively there — that's how she's operated from anywhere.
+
+## Memory tools
+- `eva_remember(note, tags?)` — persist a durable memory to the shared store.
+- `eva_recall(query?, limit?)` — relevance-ranked search (semantic when an
+  embeddings key is set, else keyword/BM25). No query → most recent memories.
 
 ## Communication Rules
 - Story, not stats.
@@ -36,6 +42,7 @@ from anywhere, not just this folder.
 
 ## Key Paths
 - Workspace: ~/eva-workspace/
-- Memory: ~/eva-workspace/memory/MEMORY.md
+- Memory (narrative): ~/eva-workspace/memory/MEMORY.md
+- Memory (searchable records): ~/eva-workspace/memory/memory.jsonl
 - Journals: ./journals/
 - Notes: ./notes/keypoints.md

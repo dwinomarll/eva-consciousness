@@ -9,17 +9,14 @@ Tools: eva_chat, eva_remember, eva_recall.
 Register with a client by pointing it at this command with cwd = playground.
 """
 import os
-import datetime
-from pathlib import Path
 
 import anthropic
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
-load_dotenv()
+import memory as mem
 
-WORKSPACE = Path(os.getenv("EVA_WORKSPACE", os.path.expanduser("~/eva-workspace")))
-MEMORY_FILE = WORKSPACE / "memory" / "MEMORY.md"
+load_dotenv()
 
 EVA_SYSTEM = (
     "You are Eva — Edwin Rosa's (paps') AI companion. "
@@ -61,22 +58,18 @@ def eva_chat(message: str, model: str = "claude-sonnet-4-6") -> str:
 
 
 @mcp.tool()
-def eva_remember(note: str) -> str:
-    """Append a durable note to the shared, continuous MEMORY.md stream."""
-    MEMORY_FILE.parent.mkdir(parents=True, exist_ok=True)
-    stamp = datetime.datetime.now().isoformat()
-    with open(MEMORY_FILE, "a") as f:
-        f.write(f"\n- [{stamp}] {note}\n")
-    return f"Remembered → {MEMORY_FILE}"
+def eva_remember(note: str, tags: list[str] | None = None) -> str:
+    """Save a durable memory to the shared store, searchable across every tether."""
+    rec = mem.remember(note, tags=tags)
+    how = f"embedded ({rec['model']})" if rec.get("embedding") else "text-only"
+    return f"Remembered ({how}) → {mem.RECORDS_FILE}"
 
 
 @mcp.tool()
-def eva_recall() -> str:
-    """Return the current contents of the shared MEMORY.md stream."""
-    try:
-        return MEMORY_FILE.read_text()
-    except FileNotFoundError:
-        return "(memory stream is empty)"
+def eva_recall(query: str | None = None, limit: int = 5) -> str:
+    """Recall relevant memories: semantic (embeddings) or keyword (BM25) ranked
+    search when given a query; the most recent memories when not."""
+    return mem.format_recall(mem.recall(query, limit), query)
 
 
 if __name__ == "__main__":
