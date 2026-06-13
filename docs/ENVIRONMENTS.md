@@ -129,3 +129,7 @@ the **same memory stream**, so Eva is one continuous self across consumers.
 - Rate limiting (token bucket per bearer)
 - mDNS announcement on LAN (`_mcp._tcp`) for zero-config discovery
 - Multi-region: read-replica memory via object-storage sync
+
+---
+
+*Regenerate the PDF of this doc:* `pip install fpdf2 && python scripts/make-docs-pdf.py docs/ENVIRONMENTS.md eva-env-design.pdf`
