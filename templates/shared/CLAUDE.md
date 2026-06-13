@@ -28,6 +28,7 @@ This playground can also expose Eva *as* an MCP server — stdio (`npm run mcp`
 or `python eva_mcp.py`) or remote HTTP (`npm run mcp:http`). Tools: eva_chat,
 eva_remember, eva_recall. Point any MCP app (Ma'at, Claude Desktop, …) at it and
 those tools appear natively there — that's how she's operated from anywhere.
+Reach levels, client configs, and worldwide deployment: see TETHER.md.
 
 ## Memory tools
 - `eva_remember(note, tags?)` — persist a durable memory to the shared store.

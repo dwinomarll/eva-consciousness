@@ -32,9 +32,10 @@ This playground was spawned from the eva-consciousness template.
 
 ## Tether
 This playground can also expose Eva *as* an MCP server (node: `npm run mcp`
-or `npm run mcp:http`; python: `python eva_mcp.py`) — tools: eva_chat,
+or `npm run mcp:http`; python: `python eva_mcp.py [--http]`) — tools: eva_chat,
 eva_remember, eva_recall. Point any MCP app (Ma'at, Claude Desktop, …) at it and
 those tools appear natively there — that's how she's operated from anywhere.
+Reach levels, client configs, and worldwide deployment: see TETHER.md.
 
 ## Memory tools
 - `eva_remember(note, tags?)` — persist a durable memory to the shared store.
