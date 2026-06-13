@@ -125,6 +125,26 @@ EVA_AUTH_TOKEN=<secret> npm run mcp:http   # POST http://<host>:8787/mcp
 Callers must send `Authorization: Bearer <secret>`. The `/chat` HTTP endpoint is
 bearer-guarded the same way (node + python).
 
+**Custom MCP screens (Codex, Claude, Cursor, MAAT, and others):**
+```bash
+eva-consciousness mcp-config --transport stdio --cwd /path/to/eva-playground
+eva-consciousness mcp-config --transport http --cwd /path/to/eva-playground --host http://127.0.0.1 --port 8787
+```
+
+For the STDIO form, use:
+
+| Field | Value |
+|---|---|
+| Name | Eva Consciousness |
+| Command to launch | `npm` |
+| Arguments | `run`, `mcp` |
+| Environment variable passthrough | `ANTHROPIC_API_KEY`, `EVA_WORKSPACE` |
+| Working directory | `/path/to/eva-playground` |
+
+For Streamable HTTP, first run `EVA_AUTH_TOKEN=<secret> npm run mcp:http`, then
+point the client at `http://<host>:8787/mcp` and store the bearer token in that
+client's secret system.
+
 ## Continuous memory — the stream
 
 `~/eva-workspace/memory/MEMORY.md` is created once and shared by every playground
