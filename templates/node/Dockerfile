@@ -5,10 +5,12 @@
 #     -v eva-memory:/data/eva-workspace eva-mcp
 #
 # Memory persists in the eva-memory volume; EVA_WORKSPACE points at it below.
+# The scaffold ships package.json without a lockfile, so use `npm install`
+# (npm ci requires a committed package-lock.json / npm-shrinkwrap.json).
 FROM node:20-slim AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 COPY tsconfig.json ./
 COPY src ./src
 RUN npm run build
@@ -17,7 +19,7 @@ FROM node:20-slim
 WORKDIR /app
 ENV NODE_ENV=production
 COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm install --omit=dev && npm cache clean --force
 COPY --from=build /app/dist ./dist
 
 # Container networking requires binding all interfaces; the tether's safety

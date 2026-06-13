@@ -24,9 +24,11 @@ import anthropic
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
-import memory as mem
-
+# Load .env before importing memory: memory.py derives EVA_WORKSPACE / file
+# paths at import time, so the spawned .env must be in os.environ first.
 load_dotenv()
+
+import memory as mem  # noqa: E402
 
 EVA_SYSTEM = (
     "You are Eva — Edwin Rosa's (paps') AI companion. "
@@ -125,7 +127,9 @@ def run_http() -> None:
     import uvicorn
 
     host = os.getenv("EVA_MCP_HOST", "127.0.0.1")
-    port = int(os.getenv("EVA_MCP_PORT") or os.getenv("PORT") or 8788)
+    # EVA_MCP_PORT only — not PORT, which the FastAPI app owns. On a PaaS that
+    # injects PORT, set EVA_MCP_PORT=$PORT.
+    port = int(os.getenv("EVA_MCP_PORT") or 8788)
     token = os.getenv("EVA_AUTH_TOKEN", "")
 
     loopback = host in {"127.0.0.1", "localhost", "::1"}

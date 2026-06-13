@@ -33,8 +33,8 @@ explicitly. Misconfiguration fails closed, never open.
 | Variable | Default | Role |
 |----------|---------|------|
 | `EVA_MCP_HOST` | `127.0.0.1` | reach selector (loopback vs world) |
-| `EVA_MCP_PORT` | `8787` node / `8788` py | tether port; overrides `PORT` |
-| `PORT` | — | injected by PaaS (Railway/Render/Fly); honored as fallback |
+| `EVA_MCP_PORT` | `8787` node / `8788` py | tether port (independent of the app's `PORT`) |
+| `PORT` | `3000` | the playground **app** port (Express/FastAPI), not the tether's; on a PaaS, set `EVA_MCP_PORT=$PORT` |
 | `EVA_AUTH_TOKEN` | unset | bearer token; gates every endpoint except `/health` |
 | `EVA_ALLOW_OPEN` | unset | explicit opt-in to run open beyond loopback |
 | `EVA_CORS_ORIGIN` | `*` | lock browser clients to one origin in prod |
@@ -81,9 +81,9 @@ The image binds `0.0.0.0` *inside* the container (required), keeps the
 interlock active, persists memory in the `eva-memory` volume, and exposes
 `GET /health` for orchestrator probes.
 
-**PaaS:** push the playground repo; the tether honors injected `PORT`; set
-`EVA_AUTH_TOKEN` + `ANTHROPIC_API_KEY` as secrets; attach a volume at
-`/data/eva-workspace`. TLS and a public URL come free.
+**PaaS:** push the playground repo; map the platform's injected port with
+`EVA_MCP_PORT=$PORT`; set `EVA_AUTH_TOKEN` + `ANTHROPIC_API_KEY` as secrets;
+attach a volume at `/data/eva-workspace`. TLS and a public URL come free.
 
 **VPS:** `docker run` + Caddyfile `eva.yourdomain.com { reverse_proxy
 localhost:8787 }` — automatic HTTPS.

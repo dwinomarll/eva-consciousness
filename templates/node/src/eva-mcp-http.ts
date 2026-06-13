@@ -24,7 +24,10 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import { createEvaServer, MEMORY_FILE } from './eva-server.js'
 
 const HOST = process.env.EVA_MCP_HOST ?? '127.0.0.1'
-const PORT = Number(process.env.EVA_MCP_PORT ?? process.env.PORT ?? 8787)
+// EVA_MCP_PORT only — deliberately NOT process.env.PORT, which the Express app
+// (.env PORT=3000) owns; sharing it would collide with `npm start`. On a PaaS
+// that injects PORT, set EVA_MCP_PORT=$PORT.
+const PORT = Number(process.env.EVA_MCP_PORT ?? 8787)
 const AUTH_TOKEN = process.env.EVA_AUTH_TOKEN
 const CORS_ORIGIN = process.env.EVA_CORS_ORIGIN ?? '*'
 
